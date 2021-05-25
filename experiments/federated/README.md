@@ -16,7 +16,7 @@ git submodule update --init --recursive
 
 ### Update PYTHONPATH
 
-Add `experiments/federated/google_tff_research` to `PYTHONPATH`
+Add `experiments/federated/google_tff_research` to `PYTHONPATH`.
 
 ## Training
 
@@ -30,6 +30,6 @@ You can monitor the progress using TensorBoard:
 tensorboard --logdir <root_output_dir>/logdir
 ```
 
-## Generate Plots
+## Results
 
-Execute `plots.ipynb` using [Jupyter](https://jupyter.org/) to re-create the plot from the paper. 
+Execute `fl_plot.ipynb` using [Jupyter](https://jupyter.org/) to re-create Figure 2 from the paper. 

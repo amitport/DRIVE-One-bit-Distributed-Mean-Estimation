@@ -8,4 +8,4 @@ pip install -r requirements.txt
 
 ## Training
 
-## Generate Plots
+## Results
