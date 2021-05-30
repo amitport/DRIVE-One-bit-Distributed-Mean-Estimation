@@ -22,7 +22,7 @@ Add `experiments/federated/google_tff_research` to `PYTHONPATH`.
 
 Each line in `experiments.txt` corresponds to command line parameters of one experiment.
 
-In order to reproduce the papers result execute `run_experiment.py` for every line in `experiments.txt` and add `--root_output_dir` command line parameter to specify the output directory.
+In order to reproduce the paper's results, execute `run_experiment.py` for every line in `experiments.txt` and add the `--root_output_dir` command line parameter to specify the output directory.
 
 You can monitor the progress using TensorBoard:
 

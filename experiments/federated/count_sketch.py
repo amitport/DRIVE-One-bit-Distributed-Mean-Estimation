@@ -33,7 +33,7 @@ class CountSketchCompression:
     Args:
         src_size: the number of elements in the vector that maps to the sketch
         num_cols: the number of columns (buckets) in the sketch
-        num_rows: the number of rows in the sketch
+        num_rows: the number of rows in the sketch (should be an odd number)
         seed: a tuple with 2 numbers needed for reproducibility
     """
 
