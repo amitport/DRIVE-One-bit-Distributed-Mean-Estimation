@@ -141,7 +141,7 @@ def drive_plus_compress(vec, kmeans_niters=3, prng=None):
   hadamard_rotate(vec)
 
   ##### finding the centroids
-  assignments, centers, sizes = one_dimentional_two_means(vec, numel, kmeans_niters)
+  assignments, centers, sizes = one_dimentional_two_means(vec, kmeans_niters)
 
   ### compute the scale (rotation preserves the L2 norm)
   scale = torch.norm(vec, 2) ** 2 / (sizes[0] * centers[0] ** 2 + sizes[1] * centers[1] ** 2)
