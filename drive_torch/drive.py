@@ -10,7 +10,7 @@ def hadamard_rotate(vec):
   '''
     
   numel = vec.numel()
-  if (numel & (numel-1) == 0) and numel != 0:
+  if numel & (numel-1) != 0:
       raise Exception("vec numel must be a power of 2")
       
   h = 2
