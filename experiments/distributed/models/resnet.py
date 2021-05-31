@@ -125,11 +125,3 @@ def ResNet101(num_classes=10):
 
 def ResNet152(num_classes=10):
     return ResNet(Bottleneck, [3, 8, 36, 3], num_classes)
-
-
-def test():
-    net = ResNet18()
-    y = net(torch.randn(1, 3, 32, 32))
-    print(y.size())
-
-# test()
