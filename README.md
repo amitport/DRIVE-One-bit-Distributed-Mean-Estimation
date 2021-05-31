@@ -1,6 +1,6 @@
 # DRIVE: One-bit Distributed Mean Estimation
 
-This repository is the official implementation of [DRIVE: One-bit Distributed Mean Estimation](https://arxiv.org/abs/2105.08339).
+This repository is the official implementation of 'DRIVE: One-bit Distributed Mean Estimation'.
 
 
 ## Context

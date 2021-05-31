@@ -1,3 +1,7 @@
+# Drive evaluation: federated learning
+
+This sub-project contains the federated tasks presented in the evaluation. 
+
 ## Requirements
 
 ### install requirements:

@@ -1,6 +1,6 @@
-# Drive: One-bit Distributed Mean Estimation
+# Drive evaluation: distributed learning
 
-This repository contains all the distributed tasks (Distributed CNN, K-means, Power Iteration) presented in the evaluation. 
+This sub-project contains all the distributed tasks (Distributed CNN, K-means, Power Iteration) presented in the evaluation. 
 
 ## Setup:
 - To install all the dependencies, run: `pip3 install -r requirments.txt`
