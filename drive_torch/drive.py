@@ -1,13 +1,20 @@
 import torch
 import numpy as np
 
+##############################################################################
+##############################################################################
 
 def hadamard_rotate(vec):
+  '''
+  In-place 1D hadamard transform 
+  '''
+    
   numel = vec.numel()
 
   h = 2
 
   while h <= numel:
+      
     hf = h // 2
     vec = vec.view(numel // h, h)
 
@@ -15,8 +22,14 @@ def hadamard_rotate(vec):
     vec[:, hf:2 * hf] = vec[:, :hf] - 2 * vec[:, hf:2 * hf]
     h *= 2
 
+##############################################################################
+##############################################################################
 
 def one_dimentional_two_means(vec, niters):
+  '''
+  Simplified Lloyd's algorithm for 2-means and 1D data
+  '''
+    
   numel = vec.numel()
 
   vec_sum = vec.sum()
@@ -33,6 +46,7 @@ def one_dimentional_two_means(vec, niters):
   center2 = sum2 / size2
 
   for i in range(niters):
+      
     old_size1 = size1.clone()
 
     mid = (center1 + center2) / 2
@@ -55,15 +69,19 @@ def one_dimentional_two_means(vec, niters):
 
   return assignments, (center1, center2), (size1, size2)
 
+##############################################################################
+##############################################################################
 
 def drive_compress(vec, prng=None):
   '''
   :param vec: the vector to compress
-  :param prng: a generator that determines the Hadamard rotation
+  :param prng: a generator that determines the specific Hadamard rotation
   :return: compressed vector
   '''
-
+  
+  ### dimension
   numel = vec.numel()
+  
   ### in-place hadamard transform
   if prng is not None:
     vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
@@ -89,6 +107,7 @@ def drive_decompress(vec, scale, prng=None):
     :return: decompressed vector
     '''
 
+  ### dimension
   numel = vec.numel()
 
   ### in-place hadamard transform (inverse)
@@ -111,7 +130,9 @@ def drive_plus_compress(vec, kmeans_niters=3, prng=None):
   :return: compressed vector
   '''
 
+  ### dimension
   numel = vec.numel()
+  
   ### in-place hadamard transform
   if prng is not None:
     vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
@@ -136,10 +157,11 @@ def drive_plus_decompress(assignments, centers, prng=None):
   :param prng: random generator for Hadamard rotation, should have the same state used for compression
   :return: decompressed vector
   '''
-
+  
+  ### dimension
   numel = assignments.numel()
+  
   vec = torch.zeros(numel, device=assignments.device)
-
   vec[assignments] = centers[0]
   vec[~assignments] = centers[1]
 
@@ -149,3 +171,7 @@ def drive_plus_decompress(assignments, centers, prng=None):
     vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
 
   return vec
+
+##############################################################################
+##############################################################################
+
