@@ -29,53 +29,6 @@ def hadamard_rotate(vec):
 ##############################################################################
 ##############################################################################
 
-def one_dimentional_two_means(vec, niters):
-  '''
-  Simplified Lloyd's algorithm for 2-means and 1D data
-  '''
-    
-  numel = vec.numel()
-
-  vec_sum = vec.sum()
-
-  old_assignments = torch.lt(vec, vec_sum / numel)
-
-  size1 = old_assignments.sum()
-  size2 = numel - size1
-
-  sum1 = vec[old_assignments].sum()
-  sum2 = vec_sum - sum1
-
-  center1 = sum1 / size1
-  center2 = sum2 / size2
-
-  for i in range(niters):
-      
-    old_size1 = size1.clone()
-
-    mid = (center1 + center2) / 2
-    assignments = torch.lt(vec, mid)
-
-    diff_1 = assignments.int() - old_assignments.int()
-    old_assignments = assignments
-
-    size1 += diff_1.sum()
-    size2 = numel - size1
-
-    sum1 += (vec * diff_1).sum()
-    sum2 = vec_sum - sum1
-
-    center1 = sum1 / size1
-    center2 = sum2 / size2
-
-    if old_size1 == size1:
-      break
-
-  return assignments, (center1, center2), (size1, size2)
-
-##############################################################################
-##############################################################################
-
 def drive_compress(vec, prng=None):
   '''
   :param vec: the vector to compress (currently we require vec numel to be a power of two)
@@ -122,6 +75,52 @@ def drive_decompress(vec, scale, prng=None):
   return scale * vec
 
 ##############################################################################
+##############################################################################
+
+def one_dimentional_two_means(vec, niters):
+  '''
+  Simplified Lloyd's algorithm for 2-means and 1D data
+  '''
+    
+  numel = vec.numel()
+
+  vec_sum = vec.sum()
+
+  old_assignments = torch.lt(vec, vec_sum / numel)
+
+  size1 = old_assignments.sum()
+  size2 = numel - size1
+
+  sum1 = vec[old_assignments].sum()
+  sum2 = vec_sum - sum1
+
+  center1 = sum1 / size1
+  center2 = sum2 / size2
+
+  for i in range(niters):
+      
+    old_size1 = size1.clone()
+
+    mid = (center1 + center2) / 2
+    assignments = torch.lt(vec, mid)
+
+    diff_1 = assignments.int() - old_assignments.int()
+    old_assignments = assignments
+
+    size1 += diff_1.sum()
+    size2 = numel - size1
+
+    sum1 += (vec * diff_1).sum()
+    sum2 = vec_sum - sum1
+
+    center1 = sum1 / size1
+    center2 = sum2 / size2
+
+    if old_size1 == size1:
+      break
+
+  return assignments, (center1, center2), (size1, size2)
+
 ##############################################################################
 
 def drive_plus_compress(vec, kmeans_niters=3, prng=None):
