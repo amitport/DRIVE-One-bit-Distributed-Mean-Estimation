@@ -10,7 +10,10 @@ def hadamard_rotate(vec):
   '''
     
   numel = vec.numel()
-
+  numel = vec.numel()
+  if (numel & (numel-1) == 0) and numel != 0:
+      raise Exception("vec numel must be a power of 2")
+      
   h = 2
 
   while h <= numel:
@@ -74,8 +77,8 @@ def one_dimentional_two_means(vec, niters):
 
 def drive_compress(vec, prng=None):
   '''
-  :param vec: the vector to compress (currently we require the vec is a power of two)
-  :param prng: a generator that determines the specific Hadamard rotation
+  :param vec: the vector to compress (currently we require vec numel to be a power of two)
+  :param prng: a generator that determines the specific (random) Hadamard rotation
   :return: compressed vector
   '''
   
@@ -122,9 +125,9 @@ def drive_decompress(vec, scale, prng=None):
 
 def drive_plus_compress(vec, kmeans_niters=3, prng=None):
   '''
-  :param vec: the vector to compress (currently we require the vec is a power of two)
-  :param kmeans_niters: the number of Lloyd's K-mean iterations
-  :param prng: a generator that determines the Hadamard rotation
+  :param vec: the vector to compress (currently we require vec numel to be a power of two)
+  :param kmeans_niters: the number of Lloyd's K-means iterations
+  :param prng: a generator that determines the specific (random) Hadamard rotation
   :return: compressed vector
   '''
 
