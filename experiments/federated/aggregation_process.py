@@ -15,6 +15,7 @@ identity_aggr = GradientAggregationSpec(
     decode_post_aggregate=lambda shared, var_state, original_shape, encoded_grad: (tf.identity(encoded_grad), ())
 )
 
+
 def _get_model_metadata(model_fn: Callable[[], tff.learning.Model]):
     with tf.Graph().as_default():
         model = model_fn()

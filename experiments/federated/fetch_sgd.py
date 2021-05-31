@@ -3,13 +3,25 @@ from collections import namedtuple
 import tensorflow as tf
 from sympy import nextprime
 
-from experiments.federated.aggregation_process import GradientAggregationSpec, AggregationSpec
+from experiments.federated.aggregation_process import GradientAggregationSpec, AggregationSpec, identity_aggr
 from experiments.federated.count_sketch import CountSketchCompression
-from experiments.federated.utils import abs_top_k
+
 
 SharedState = namedtuple('FetchSgdSharedState', ['momentum_coef', 'learning_rate', 'k'])
 PerVarState = namedtuple('FetchSgdPerVarState', ['momentum', 'error'])
 
+
+@tf.function
+def abs_top_k(tensor, k):  # k should be a tf.constant to avoid retracing
+  orig_shape = tf.shape(tensor)
+
+  x = tf.reshape(tensor, [-1])  # flatten
+  _, indices = tf.math.top_k(tf.math.abs(x), k)  # absolute top-k indices
+  x = tf.scatter_nd(
+    indices=tf.expand_dims(indices, -1),  # scatter_nd expect this format
+    updates=tf.gather(x, indices),  # find original non-absolute value
+    shape=tf.shape(x))
+  return tf.reshape(x, orig_shape)  # unflatten
 
 def build_fetch_sgd(var_types, var_names,
                     num_rows, num_cols, momentum, lr, k, require_size_larger_than, **kwargs) -> AggregationSpec:
