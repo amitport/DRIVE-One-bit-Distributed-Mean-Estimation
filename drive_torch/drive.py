@@ -96,7 +96,6 @@ def drive_compress(vec, prng=None):
   #### send
   return vec, scale
 
-
 ##############################################################################
 
 def drive_decompress(vec, scale, prng=None):
@@ -117,7 +116,6 @@ def drive_decompress(vec, scale, prng=None):
 
   ##### scale and return
   return scale * vec
-
 
 ##############################################################################
 ##############################################################################
@@ -146,7 +144,6 @@ def drive_plus_compress(vec, kmeans_niters=3, prng=None):
 
   #### scale and send
   return assignments, (scale * centers[0], scale * centers[1])
-
 
 ##############################################################################
 
