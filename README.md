@@ -11,4 +11,6 @@ This repository is the official implementation of [DRIVE: One-bit Distributed Me
 
 `drive_tf` and `drive_torch` folders contain our standalone implementation for TensorFlow and PyTorch, respectively.
 
-The `experiments` folder contains details on how to reproduce the paper's results. It is separated into two sub-projects: (1) the `distributed` folder contains all the distributed tasks (Distributed CNN, K-means, Power Iteration) using PyTorch; and (2) the `federated` folder contains the federated experiments using Tensorflow  
+The `experiments` folder contains details on how to reproduce the paper's results. It is separated into two sub-projects: 
+1) the `distributed` folder contains all the distributed tasks (Distributed CNN, K-means, Power Iteration) using PyTorch. 
+2) the `federated` folder contains the federated experiments using Tensorflow.  
