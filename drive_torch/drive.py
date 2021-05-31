@@ -24,6 +24,8 @@ def hadamard_rotate(vec):
     vec[:, hf:2 * hf] = vec[:, :hf] - 2 * vec[:, hf:2 * hf]
     h *= 2
 
+  vec /= np.sqrt(numel)
+
 ##############################################################################
 ##############################################################################
 
@@ -86,8 +88,8 @@ def drive_compress(vec, prng=None):
   
   ### in-place hadamard transform
   if prng is not None:
-    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
-  hadamard_rotate(vec, numel)
+    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1)
+  hadamard_rotate(vec)
 
   #### compute the scale (rotation preserves the L2 norm)
   scale = torch.norm(vec, 2) ** 2 / torch.norm(vec, 1)
@@ -112,9 +114,9 @@ def drive_decompress(vec, scale, prng=None):
   numel = vec.numel()
 
   ### in-place hadamard transform (inverse)
-  hadamard_rotate(vec, numel)
+  hadamard_rotate(vec)
   if prng is not None:
-    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
+    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1)
 
   ##### scale and return
   return scale * vec
@@ -135,8 +137,8 @@ def drive_plus_compress(vec, kmeans_niters=3, prng=None):
   
   ### in-place hadamard transform
   if prng is not None:
-    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
-  hadamard_rotate(vec, numel)
+    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1)
+  hadamard_rotate(vec)
 
   ##### finding the centroids
   assignments, centers, sizes = one_dimentional_two_means(vec, numel, kmeans_niters)
@@ -165,9 +167,9 @@ def drive_plus_decompress(assignments, centers, prng=None):
   vec[~assignments] = centers[1]
 
   ### in-place hadamard transform (inverse)
-  hadamard_rotate(vec, numel)
+  hadamard_rotate(vec)
   if prng is not None:
-    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1) / np.sqrt(numel)
+    vec = vec * (2 * torch.bernoulli(torch.ones(numel, device=vec.device) / 2, generator=prng) - 1)
 
   return vec
 
