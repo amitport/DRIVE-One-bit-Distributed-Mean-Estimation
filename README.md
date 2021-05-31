@@ -9,6 +9,6 @@ This repository is the official implementation of [DRIVE: One-bit Distributed Me
 
 ## Folder structure 
 
-`drive_tf` and `drive_torch` folders contain our implementation for TensorFlow and PyTorch, respectively.
+`drive_tf` and `drive_torch` folders contain our standalone implementation for TensorFlow and PyTorch, respectively.
 
-The `experiments` folder contains details on how to reproduce the paper's results.
+The `experiments` folder contains details on how to reproduce the paper's results. It is separated into two 

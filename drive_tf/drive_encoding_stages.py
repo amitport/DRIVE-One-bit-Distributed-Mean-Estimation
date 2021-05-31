@@ -87,8 +87,8 @@ class DriveSignStage(te.core.EncodingStageInterface):
 
 
 @tf.function
-def _two_means_1d_floyd(points):
-  # simple floyd algorithm for 2-mean in 1d
+def _two_means_1d_lloyd(points):
+  # simple lloyd algorithm for 2-mean in 1d
 
   assignments = tf.random.uniform(shape=points.shape, minval=0, maxval=2, dtype=tf.int32)
   epsilon = tf.constant(1e-6, dtype=points.dtype)
@@ -145,16 +145,16 @@ class DrivePlusClusteringStage(te.core.EncodingStageInterface):
   CENTER_0_KEY = 'c0'
   CENTER_1_KEY = 'c1'
 
-  def __init__(self, clustering: str = 'floyd'):
+  def __init__(self, clustering: str = 'lloyd'):
     """
-    :param clustering: one of ['floyd', 'split_at_mean']
+    :param clustering: one of ['lloyd', 'split_at_mean']
     """
-    if clustering == 'floyd':
-      self.clustering = _two_means_1d_floyd
+    if clustering == 'lloyd':
+      self.clustering = _two_means_1d_lloyd
     elif clustering == 'split_at_mean':
       self.clustering = _split_at_mean_clustering
     else:
-      raise TypeError("'clustering' param must be one of ['floyd', 'split_at_mean']")
+      raise TypeError("'clustering' param must be one of ['lloyd', 'split_at_mean']")
 
   @staticmethod
   def _inner_decode(assignments, center_0, center_1):

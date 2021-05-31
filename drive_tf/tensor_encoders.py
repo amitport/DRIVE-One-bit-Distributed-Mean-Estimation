@@ -18,7 +18,7 @@ def drive_encoder():
   ).make()
 
 
-def drive_plus_encoder(clustering: str = 'floyd'):
+def drive_plus_encoder(clustering: str = 'lloyd'):
   return te.core.core_encoder.EncoderComposer(
     te.stages.BitpackingEncodingStage(1)
   ).add_parent(

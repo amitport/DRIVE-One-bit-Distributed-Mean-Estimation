@@ -74,7 +74,7 @@ def one_dimentional_two_means(vec, niters):
 
 def drive_compress(vec, prng=None):
   '''
-  :param vec: the vector to compress
+  :param vec: the vector to compress (currently we require the vec is a power of two)
   :param prng: a generator that determines the specific Hadamard rotation
   :return: compressed vector
   '''
@@ -122,8 +122,8 @@ def drive_decompress(vec, scale, prng=None):
 
 def drive_plus_compress(vec, kmeans_niters=3, prng=None):
   '''
-  :param vec: the vector to compress
-  :param kmeans_niters: the number of Floyd's K-mean iterations
+  :param vec: the vector to compress (currently we require the vec is a power of two)
+  :param kmeans_niters: the number of Lloyd's K-mean iterations
   :param prng: a generator that determines the Hadamard rotation
   :return: compressed vector
   '''
