@@ -1,7 +1,4 @@
 
-##############################################################################
-##############################################################################
-
 import pandas as pd
 import numpy as np
 import torch
@@ -62,9 +59,6 @@ def speed_cost_test(algorithm, dimension, nclients, ntrials, device='cpu', seed=
     encode_times = []
     errors = []
     
-    ### distribution
-    vec_distribution = torch.distributions.LogNormal(0,1)
-
     print("\n*** Running {} with dimension of {} and {} clients".format(algorithm, dimension, nclients))
     if args.verbose:
         print('\n')
@@ -73,11 +67,11 @@ def speed_cost_test(algorithm, dimension, nclients, ntrials, device='cpu', seed=
         kbar = pkbar.Kbar(target=ntrials, width=50, always_stateful=True)
 
     for trial in range(ntrials):
-        
+                
         if args.verbose:
             kbar.update(trial)
                 
-        original_vec = vec_distribution.sample([dimension]).to(device)            
+        original_vec = vec_distribution.sample([dimension]).to(device).view(-1)            
         reconstructed_vec = torch.zeros(dimension, device=device)
                     
         for client in range(nclients):
@@ -149,9 +143,7 @@ def encode_speed(algorithm, dimension, nvectors, ntrials, device='cpu', seed=42,
         
     sender_generator = torch.Generator(device=device)
     sender_generator.manual_seed(seed)
-        
-    vec_distribution = torch.distributions.LogNormal(0,1)
-    
+            
     encode_times   = []
 
     print("\n*** Running {} with dimension of {} and {} repetitions".format(algorithm, dimension, ntrials))
@@ -164,7 +156,7 @@ def encode_speed(algorithm, dimension, nvectors, ntrials, device='cpu', seed=42,
         if args.verbose:
             kbar.update(vector)
                     
-        original_vec = vec_distribution.sample([dimension]).to(device) 
+        original_vec = vec_distribution.sample([dimension]).to(device).view(-1) 
 
         start = torch.cuda.Event(enable_timing=True)
         end = torch.cuda.Event(enable_timing=True)
@@ -252,13 +244,13 @@ def figure_tests(args):
     
     ### hadamard
     algorithms = ['drive', 'drive_plus']
-    nclients_ntrials = 1000
+    nclients_ntrials = 10000
            
     for dim in dimensions:
         for alg in algorithms:
             _, _, err, err_std = speed_cost_test(alg, dim, nclients, nclients_ntrials, device=device, seed=args.seed, verbose=args.verbose)
             df.loc[dim].at[alg] = "{:.4f}, {:.4f}".format(err, err_std)
-          
+              
     ### uniform random rotation
     algorithms = ['drive_urr', 'drive_urr_plus']
     nclients_ntrials = 100
@@ -268,7 +260,7 @@ def figure_tests(args):
             _, _, err, err_std = speed_cost_test(alg, dim, nclients, nclients_ntrials, device=device, seed=args.seed, verbose=args.verbose)
             df.loc[dim].at[alg] = "{:.4f}, {:.4f}".format(err, err_std)
 
-    df.to_pickle(args.path + "/figure_results/cost.pkl")
+    df.to_pickle(args.path + "/figure_results/cost_{}.pkl".format(str(type(vec_distribution)).split(".")[-2]))
            
 
 ##############################################################################
@@ -288,15 +280,10 @@ def table_tests(args):
                   'drive_urr_plus'
                   ]
    
-    dimensions = [4, 8, 16, 32, 64, 128, 8192, 524288, 33554432]
+    dimensions = [128, 8192, 524288, 33554432]
     
     nclients = 10
     nclients_ntrials = {
-            4 : 1000,
-            8 : 1000,
-            16 : 1000,
-            32 : 1000,
-            64 : 1000,
             128 : 1000,
             8192 : 1000,
             524288 : 1000,
@@ -305,11 +292,6 @@ def table_tests(args):
         
     nvectors = 100
     nvectors_ntrials = {
-            4 : 100,
-            8 : 100,
-            16 : 100,
-            32 : 100,
-            64 : 100,
             128 : 100,
             8192 : 100,
             524288 : 100,
@@ -335,7 +317,7 @@ def table_tests(args):
             ent, _, err, _ = speed_cost_test(alg, dim, nclients, nclients_ntrials[dim], device=device, seed=args.seed, verbose=args.verbose)
             df1.loc[dim].at[alg] = "{:.4f}, {:.4f}".format(err, ent)
 
-    df1.to_pickle(args.path + "/table_results/cost_speed.pkl")
+    df1.to_pickle(args.path + "/table_results/cost_speed_{}.pkl".format(str(type(vec_distribution)).split(".")[-2]))
            
     ### test 2
     df2 = pd.DataFrame(columns=algorithms)  
@@ -352,7 +334,7 @@ def table_tests(args):
             ent, _ = encode_speed(alg, dim, nvectors, nvectors_ntrials[dim], device=device, seed=args.seed, verbose=args.verbose)
             df2.loc[dim].at[alg] = "{:.4f}".format(ent)
 
-    df2.to_pickle(args.path + "/table_results/encode_speed.pkl")
+    df2.to_pickle(args.path + "/table_results/encode_speed_{}.pkl".format(str(type(vec_distribution)).split(".")[-2]))
     
 ##############################################################################
 ##############################################################################
@@ -370,7 +352,7 @@ if __name__ == '__main__':
                                      formatter_class=argparse.RawTextHelpFormatter)
        
     ### verbosity
-    parser.add_argument('--verbose', default=False, action='store_true', help='detailed progress')
+    parser.add_argument('--verbose', default=True, action='store_true', help='detailed progress')
 
     ### GPU index to work with, if more than one is available.
     parser.add_argument('--gpu', default='0', type=str, help='gpu index to run the simulation')
@@ -382,7 +364,10 @@ if __name__ == '__main__':
     parser.add_argument('--path', default='./results/distributed_speed_error', type=str, help='random seed')    
 
     ### dataset
-    parser.add_argument('--test', default='figure1', choices=['figure1', 'table1'], help='')
+    parser.add_argument('--test', default='figure1', choices=['figure1', 'table1'], help='which data to generate')
+
+    ### distribution
+    parser.add_argument('--dist', default='all', choices=['lognormal', 'normal', 'exponential', 'all'], help='which distributions to run')
     
     args = parser.parse_args()
 
@@ -398,15 +383,33 @@ if __name__ == '__main__':
     
     ##########################################################################
     ##########################################################################
-    
+
+    if args.dist == 'lognormal':
+        vec_distributions = [torch.distributions.LogNormal(0,1)]
+    elif args.dist == 'normal':
+        vec_distributions = [torch.distributions.Normal(0,1)]
+    elif args.dist == 'exp':
+        vec_distributions = [torch.distributions.exponential.Exponential(torch.Tensor([1]))]
+    elif args.dist == 'all':
+        vec_distributions = [torch.distributions.LogNormal(0,1), 
+                             torch.distributions.Normal(0,1), 
+                             torch.distributions.exponential.Exponential(torch.Tensor([1.0]))]
+    else:
+        raise Exception("unsupported distribution")
+        
+    ##########################################################################
+    ##########################################################################
+                
     print("Generating data for {}.".format(args.test))
     
-    if args.test == 'table1':
-        table_tests(args) 
-    elif args.test == 'figure1':   
-        figure_tests(args) 
-    else:
-        raise Exception("unknown test type")
+    for vec_distribution in vec_distributions:
+    
+        if args.test == 'table1':
+            table_tests(args) 
+        elif args.test == 'figure1':   
+            figure_tests(args) 
+        else:
+            raise Exception("unknown test type")
         
     ##########################################################################
     ##########################################################################
