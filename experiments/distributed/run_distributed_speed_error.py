@@ -136,7 +136,7 @@ def speed_cost_test(algorithm, dimension, nclients, ntrials, device='cpu', seed=
         error = compute_error(original_vec, reconstructed_vec/nclients)
         errors.append(error)
      
-    return np.mean(encode_times), np.std(encode_times, ddof=len(encode_times)-1), np.mean(errors), np.std(errors, ddof=len(errors)-1)    
+    return np.mean(encode_times), np.std(encode_times, ddof=1), np.mean(errors), np.std(errors, ddof=1)    
 
 ##############################################################################
 ##############################################################################
@@ -221,7 +221,7 @@ def encode_speed(algorithm, dimension, nvectors, ntrials, device='cpu', seed=42,
         torch.cuda.synchronize()
         encode_times.append(start.elapsed_time(end) / ntrials)   
         
-    return np.mean(encode_times), np.std(encode_times, ddof=len(encode_times)-1)
+    return np.mean(encode_times), np.std(encode_times, ddof=1)
                 
 ##############################################################################
 ##############################################################################
