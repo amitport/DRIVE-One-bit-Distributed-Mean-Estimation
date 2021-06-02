@@ -28,6 +28,8 @@ Each line in `experiments.txt` corresponds to command line parameters of one exp
 
 In order to reproduce the paper's results, execute `experiments/federated/run_experiment.py` (the current working directory should be the repo's root) for every line in `experiments.txt` and add the `--root_output_dir` command line parameter to specify the output directory.
 
+You can view the documentation for every command line parameter using `experiments/federated/run_experiment.py --help`.
+
 You can monitor the progress using TensorBoard:
 
 ```setup
