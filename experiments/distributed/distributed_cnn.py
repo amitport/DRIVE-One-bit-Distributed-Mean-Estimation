@@ -49,8 +49,7 @@ def train(epoch):
     total = 0
     
     if args.verbose:
-        print("\nTraining:")
-        kbar = pkbar.Kbar(target=len(trainloader)-1, epoch=epoch-1, num_epochs=args.num_epochs, width=50, always_stateful=True)
+        kbar = pkbar.Kbar(target=len(trainloader), epoch=epoch-1, num_epochs=args.num_epochs, width=50, always_stateful=True)
     
     compressed_client_grad_vecs = {}
 
@@ -62,7 +61,7 @@ def train(epoch):
         ### every client has the same batch size
         if len(client_inputs) < args.clientBatchSize:
             if args.verbose:
-                kbar.update(batch_idx, values=[("loss", train_loss / (batch_idx + 1)), ("accuracy", 100. * correct / total)])
+                kbar.update(batch_idx+1, values=[("loss", train_loss / (batch_idx + 1)), ("train accuracy", 100. * correct / total)])
             continue
 
         optimizer.zero_grad()
@@ -125,7 +124,7 @@ def train(epoch):
         ##############################################################
         
         if args.verbose:
-            kbar.update(batch_idx, values=[("loss", train_loss / (batch_idx + 1)), ("accuracy", 100. * correct / total)])
+            kbar.update(batch_idx, values=[("loss", train_loss / (batch_idx + 1)), ("train accuracy", 100. * correct / total)])
         
         ##############################################################
         ############## all clients finished a batch? #################
@@ -200,7 +199,6 @@ def test(epoch):
     total = 0
     
     if args.verbose:
-        print("Testing:")
         kbar = pkbar.Kbar(target=len(testloader)-1, epoch=epoch-1, num_epochs=args.num_epochs, width=50,
                           always_stateful=True)
 
@@ -217,7 +215,7 @@ def test(epoch):
             correct += predicted.eq(targets).sum().item()
             
             if args.verbose:
-                kbar.update(batch_idx, values=[("loss", test_loss / (batch_idx + 1)), ("accuracy", 100. * correct / total)])
+                kbar.update(batch_idx, values=[("loss", test_loss / (batch_idx + 1)), ("test accuracy", 100. * correct / total)])
 
     # save checkpoint.
     acc = 100. * correct / total
@@ -319,7 +317,7 @@ if __name__ == '__main__':
     ####################### Preparing data ###################################
     ##########################################################################
 
-    print('==> Preparing data..')
+    print('==> Preparing data, this might take a while...')
 
     num_classes, trainset, trainloader, testset, testloader = getattr(dataset_factories, args.dataset)(
         args.clientBatchSize)
@@ -522,7 +520,7 @@ if __name__ == '__main__':
         results['testACCs'].append(test_acc)
 
         if not args.verbose:
-            kbar.update(epoch, values=[("Train accuracy", train_acc), ("Test accuracy", test_acc)])
+            kbar.update(epoch, values=[("train accuracy", train_acc), ("test accuracy", test_acc)])
 
     with open('./results/distributed_cnn/' + 'results_' + suffix + '.pkl', 'wb') as filehandle:
         pickle.dump(results, filehandle)

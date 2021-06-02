@@ -171,13 +171,6 @@ def prepare_data(algorithm, suffix, objectives_key, factor=1):
 
     return objectives, epochs
 
-
-def read_result(experiment_name, metric_col_name,
-                path='/Users/yanivbenitzhak/federated-learning-research/experiments/my_gradients_are_better'):
-    return pd.read_csv(f'{path}/output/results/{experiment_name}/experiment.metrics.csv', usecols=[metric_col_name],
-                       squeeze=True).rolling(150).mean()
-
-
 def plot_line(objectives, epochs, label, fmt, ax=None, linewidth=2, markersize=3, markevery=10, epoch=None):
     e = None
     if epoch is not None:

@@ -61,8 +61,7 @@ def iteration(iter_args):
 
         ### progress bar
         if args.verbose:
-            print('\n')
-            kbar = pkbar.Kbar(target=len(dataloader)-1, epoch=epoch-1, num_epochs=args.num_epochs, width=50, always_stateful=True)
+            kbar = pkbar.Kbar(target=len(dataloader), epoch=epoch-1, num_epochs=args.num_epochs, width=50, always_stateful=True)
         
         compressed_client_vectors = {}
 
@@ -97,7 +96,7 @@ def iteration(iter_args):
             ############## print status ##################################
             ##############################################################
             if args.verbose:
-                kbar.update(client)
+                kbar.update(client+1)
 
         for compressed_client_index, compressed_client_vector in compressed_client_vectors.items():
             ccv, ccv_metadata = compressed_client_vector
@@ -181,7 +180,7 @@ if __name__ == '__main__':
     ####################### Preparing data ###################################
     ##########################################################################
 
-    print('==> Preparing data..')
+    print('==> Preparing data, this might take a while...')
 
     dataloader, dataset_features, dataset_labels, dataset_len, num_classes, batch_size, dim = \
         getattr(dataset_factories, args.dataset)(args.clients)
@@ -306,7 +305,7 @@ if __name__ == '__main__':
         results['L2_error'].append(error)
 
         if not args.verbose:
-            kbar.update(epoch, values=[("L2 error", error)])
+            kbar.update(epoch+1, values=[("L2 error", error)])
 
         if error > 1e16:
             break

@@ -48,8 +48,7 @@ def iteration(dataset_args, centers):
         
         ### progress bar
         if args.verbose:
-            print('\n')
-            kbar = pkbar.Kbar(target=len(dataloader)-1, epoch=epoch-1, num_epochs=args.num_epochs, width=50, always_stateful=True)
+            kbar = pkbar.Kbar(target=len(dataloader), epoch=epoch, num_epochs=args.num_epochs, width=50, always_stateful=True)
 
         ### iterate over clients
         for client, (client_inputs, client_targets) in enumerate(dataloader):
@@ -98,7 +97,7 @@ def iteration(dataset_args, centers):
 
             ### print status
             if args.verbose:
-                kbar.update(client, values=[("L2 error", train_objective / (client + 1))])
+                kbar.update(client+1, values=[("L2 error", train_objective / (client + 1))])
 
         ##################################################################
         ################# decomporess by the server ######################
@@ -182,7 +181,7 @@ if __name__ == '__main__':
     ####################### Preparing data ###################################
     ##########################################################################
 
-    print('==> Preparing data..')
+    print('==> Preparing data, this might take a while...')
 
     dataloader, dataset_features, dataset_labels, dataset_len, num_classes, batch_size, dim = \
         getattr(dataset_factories, args.dataset)(args.clients)
@@ -295,15 +294,13 @@ if __name__ == '__main__':
 
     for epoch in range(args.num_epochs):
 
-        # print('\nEpoch: %d' % epoch)
-
         train_obj, centers = iteration(dataset_args, centers)
 
         results['epochs'].append(epoch)
         results['L2_error'].append(train_obj)
 
         if not args.verbose:
-            kbar.update(epoch, values=[("L2 error", train_obj)])
+            kbar.update(epoch+1, values=[("L2 error", train_obj)])
 
         if str(train_obj) == 'nan' or train_obj > 1e16:
             break
