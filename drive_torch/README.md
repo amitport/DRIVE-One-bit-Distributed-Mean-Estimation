@@ -9,7 +9,7 @@ pip install -r requirements.txt
 ### usage 
 
 ```python
-from drive_torce import drive_compress, drive_decompress, drive_plus_compress, drive_plus_decompress
+from drive_torch import drive_compress, drive_decompress, drive_plus_compress, drive_plus_decompress
 import torch
 
 # sender and receiver should use the same seed:
