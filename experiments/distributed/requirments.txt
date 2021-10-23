@@ -5,3 +5,4 @@ geotorch
 torch
 torchvision
 pkbar
+huffman
